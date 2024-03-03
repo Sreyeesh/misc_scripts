@@ -1,6 +1,3 @@
-Sure, here's the revised README template without the license section:
-
----
 
 # misc_scripts
 
