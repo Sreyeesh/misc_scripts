@@ -1,12 +1,27 @@
 #!/bin/bash
 
+# Check if Homebrew is installed
+if ! [ -x "$(command -v brew)" ]; then
+  echo "Homebrew is not installed. Installing Homebrew..."
+  
+  # Install Homebrew
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  
+  # Check if installation was successful
+  if [ $? -eq 0 ]; then
+    echo "Homebrew installation successful."
+  else
+    echo "Failed to install Homebrew."
+    exit 1
+  fi
+fi
+
 # Check if Git is installed
 if ! [ -x "$(command -v git)" ]; then
   echo "Git is not installed. Installing Git..."
   
-  # Install Git
-  sudo apt-get update
-  sudo apt-get install -y git
+  # Install Git using Homebrew
+  brew install git
   
   # Check if installation was successful
   if [ $? -eq 0 ]; then
@@ -20,8 +35,8 @@ else
   installed_version=$(git --version | awk '{print $3}')
   echo "Installed Git version: $installed_version"
   
-  # Get latest Git version from GitHub releases
-  latest_version=$(curl -sL https://api.github.com/repos/git/git/releases/latest | grep '"tag_name":' | cut -d'"' -f4)
+  # Get latest Git version from Homebrew
+  latest_version=$(brew info --json=v1 git | jq -r '.[0].versions.stable')
   echo "Latest Git version: $latest_version"
   
   # Compare versions
@@ -30,12 +45,8 @@ else
   else
     echo "Git is outdated. Updating Git..."
     
-    # Download latest Git version
-    sudo apt-get update
-    sudo apt-get install -y software-properties-common
-    sudo add-apt-repository ppa:git-core/ppa -y
-    sudo apt-get update
-    sudo apt-get install -y git
+    # Update Git using Homebrew
+    brew upgrade git
     
     # Check if update was successful
     if [ $? -eq 0 ]; then
